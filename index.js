@@ -132,11 +132,18 @@ app.post('/upload', async (req, res) => {
           })
       }
 
+      let userLoggedIn = req.session.user.userLoggedIn; 
+
+      if(userLoggedIn == "undefined") {
+        res.setHeader('Content-Type', 'application/json')
+        res.send(JSON.stringify({ message: "You are not signed in!" }))
+      }
+
       const insertVideoInfo = async () => {
         con.connect(function (err) {
           console.log('Video Upload database: Connected!')
 
-          const sql = "INSERT INTO videos (title, uploadedBy, description, tags, privacy, category, filePath, url) VALUES ('" + name + "', 'node-admin', '" + description + "', '" + tags + "', '" + privacy + "', '1', 'uploads/videos/" + id + ".mp4', '" + videoId + "')"
+          const sql = "INSERT INTO videos (title, uploadedBy, description, tags, privacy, category, filePath, url) VALUES ('" + name + "', '"+req.session.user.userLoggedIn+"', '" + description + "', '" + tags + "', '" + privacy + "', '1', 'uploads/videos/" + id + ".mp4', '" + videoId + "')"
           con.query(sql, function (err, result) {
             console.log('Video Info inserted')
 
@@ -283,8 +290,8 @@ app.post('/api/users/create/', function (req, res) {
   let profilePic = "assets/images/profilePictures/default.png";
   let banner = "assets/images/coverPhotos/default-cover-photo.jpg";
 
-  if(password == confirmPassword) {
-    if(username != 'undefined' || firstName != 'undefined' || email != 'undefined' || username != 'undefined' || password != 'undefined') {
+  if(username != "undefined") {
+    if(password == confirmPassword) {
       con.connect(function (err) {
         const sql = "SELECT username FROM users WHERE username = '"+username+"'"
         con.query(sql, function(err, result) {
@@ -292,7 +299,7 @@ app.post('/api/users/create/', function (req, res) {
             const sql = "INSERT INTO users (firstName, lastName, username, email, password, profilePic, banner) VALUES (?, ?, ?, ?, ?, ?, ?)"
             con.query(sql, [firstName, lastName, username, email, password, profilePic, banner], function (err, result) {
               console.log(result);
-              return res.send({ error: false, message: 'You are registered!' });
+              return res.send({ error: false, message: 'You are registered!'});
             })
           } else {
             return res.status(400).send({ error:true, message: 'The username was already been taken' });
@@ -300,10 +307,10 @@ app.post('/api/users/create/', function (req, res) {
         }) 
       })
     } else {
-      return res.status(400).send({ error:true, message: 'Please provide user' });
+      return res.status(400).send({ error:true, message: 'You did not enter the same password' });
     }
   } else {
-    return res.status(400).send({ error:true, message: 'You did not enter the same password' });
+    return res.status(400).send({ error:true, message: 'Please provide user' });
   }
 });
 
@@ -336,17 +343,40 @@ app.post('/api/users/login/', function (req, res){
         let userLoggedIn = usernameInput;
         sessionData.user.userLoggedIn = userLoggedIn;
 
-        return res.send(JSON.stringify({ error: false, message: 'You are logged in!', results: sessionData.user.userLoggedIn }));
+        return res.status(200).send(JSON.stringify({ error: false, message: 'You are logged in as: ', results: sessionData.user.userLoggedIn }));
       } else {
-        return res.send({ error: true, message: 'Wrong Credentials' });
+        return res.status(400).send({ error: true, message: 'Wrong Credentials' });
       }
     })
   })
 });
 
 app.get('/api/users/loggedIn', (req, res) => {
-  return res.send(JSON.stringify({ error: false, results: req.session.user.userLoggedIn }));
+  try {
+    if(!userLoggedIn) {
+      res.setHeader('Content-Type', 'application/json')
+      res.send(JSON.stringify({ message: "You are not signed in!" }))
+    } else {
+      return res.status(200).send(JSON.stringify({ error: false, results: "You are logged in as: " + req.session.user.userLoggedIn }));
+    }
+  } catch (err) {
+    res.status(400).send(JSON.stringify({ message: "You are not signed in!" }))
+  }
 })
+
+app.get('/api/users/logout', (req, res) => {
+  try {
+    if(userLoggedIn == "undefined") {
+      res.setHeader('Content-Type', 'application/json')
+      res.send(JSON.stringify({ message: "You are not signed in!" }))
+    } else {
+      req.session.destroy();
+      return res.send(JSON.stringify({ error: false, results: "logged out!" }));
+    }
+  } catch (err) {
+    res.status(400).send(JSON.stringify({ message: "You are not signed in!" }))
+  }
+});
 
 // show all users
 app.get('/api/users', (req, res) => {
@@ -354,7 +384,7 @@ app.get('/api/users', (req, res) => {
   const query = con.query(sql, (err, results) => {
     if (err) throw err
     res.setHeader('Content-Type', 'application/json')
-    res.send(JSON.stringify({ status: 200, error: null, response: results }))
+    res.status(200).send(JSON.stringify({ status: 200, error: null, response: results }))
   })
 })
 
@@ -364,13 +394,18 @@ app.get('/api/users/:id', (req, res) => {
   const query = con.query(sql, (err, results) => {
     if (err) throw err
     res.setHeader('Content-Type', 'application/json')
-    res.send(JSON.stringify({ status: 200, error: null, response: results }))
+
+    if(results.length == 0) {
+      res.status(400).send(JSON.stringify({status: 400, response: "Invalid username"}));
+    } else {
+      res.send(JSON.stringify({ status: 200, error: null, response: results}))
+    }
   })
 })
 
 // show all videos
 app.get('/api/video', (req, res) => {
-  const sql = 'SELECT uploadedBy,title,description,category,uploadDate,views,duration,url,tags FROM videos'
+  const sql = 'SELECT uploadedBy, title, description, category, uploadDate, views, duration, url, tags FROM videos'
   const query = con.query(sql, (err, results) => {
     if (err) throw err
     // videoArray = validator.escape(results);
@@ -392,12 +427,42 @@ app.get('/api/video/:id', (req, res) => {
 
 // update video
 app.put('/api/update/video/', (req, res) => {
-  const sql = "UPDATE videos SET title='" + req.body.title + "', description='" + req.body.description + "', privacy='" + req.body.privacy + "', category='" + req.body.category + "', tags='" + req.body.tags + "' WHERE url='" + req.query.videoUrl + "' AND uploadedBy='" + req.query.username + "'";
-  const query = con.query(sql, (err, results) => {
-    if (err) throw err
-    res.setHeader('Content-Type', 'application/json')
-    res.send(JSON.stringify({ status: 200, error: null, response: results}))
-  })
+  try {
+    let userLoggedIn = req.session.user.userLoggedIn; 
+    if(req.session.user.userLoggedIn == "undefined") {
+      res.setHeader('Content-Type', 'application/json')
+      res.status(200).send(JSON.stringify({ message: "You are not signed in!" }))
+    } else {
+      console.log(userLoggedIn + "accessed the update video page");
+      let givenVideoUrl = sanitizeHtml(req.query.videoUrl);
+      const validateUsername = "SELECT * FROM videos WHERE url = '"+givenVideoUrl+"' AND uploadedBy = '"+userLoggedIn+"'"
+      const query2 = con.query(validateUsername, (err, resultsForValidation) => {
+        if (err) throw err;  
+
+        let selectedUsername = resultsForValidation[0].username;
+        let selectedVideoUrl = resultsForValidation[0].url;
+
+        if(selectedUsername == userLoggedIn || selectedVideoUrl == givenVideoUrl) {
+
+          // declare some variables ig
+          let title = sanitizeHtml(req.body.title); 
+          let description = sanitizeHtml(req.body.description);
+          let privacy = sanitizeHtml(req.body.privacy);
+          let category = sanitizeHtml(req.body.category);
+          let tags = sanitizeHtml(req.body.tags);
+
+          const sql = "UPDATE videos SET title='" + title + "', description='" + description + "', privacy='" + privacy + "', category='" + category + "', tags='" + tags + "' WHERE url='" + givenVideoUrl + "' AND uploadedBy='" + userLoggedIn + "'";
+          const query = con.query(sql, (err, results) => {
+            if (err) throw err;  
+            res.setHeader('Content-Type', 'application/json')
+            res.status(200).send(JSON.stringify({ status: 200, error: err, response: results}))
+          })
+        }
+      })
+    }
+  } catch (err) {
+    res.status(400).send(JSON.stringify({ message: "You are not signed in!" }))
+  }
 })
 
 // Delete video
