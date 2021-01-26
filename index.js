@@ -38,7 +38,7 @@ const { readFile } = require('fs')
 const { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } = require('constants')
 
 const mysql = require('mysql')
-const { lastIndexOf, get } = require('lodash')
+const { lastIndexOf, get, result } = require('lodash')
 const con = mysql.createConnection({
   host: config.dbInfo.host,
   user: config.dbInfo.user,
@@ -49,6 +49,8 @@ const con = mysql.createConnection({
 app.listen(port, () =>
   console.log(`App is listening on port ${port}.`)
 )
+
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => {
   readFile('./html/index.html', 'utf8', (err, html) => {
@@ -353,6 +355,7 @@ app.post('/api/users/login/', function (req, res){
 
 app.get('/api/users/loggedIn', (req, res) => {
   try {
+    let userLoggedIn = req.session.user.userLoggedIn;
     if(!userLoggedIn) {
       res.setHeader('Content-Type', 'application/json')
       res.send(JSON.stringify({ message: "You are not signed in!" }))
@@ -366,6 +369,7 @@ app.get('/api/users/loggedIn', (req, res) => {
 
 app.get('/api/users/logout', (req, res) => {
   try {
+    let userLoggedIn = req.session.user.userLoggedIn;
     if(userLoggedIn == "undefined") {
       res.setHeader('Content-Type', 'application/json')
       res.send(JSON.stringify({ message: "You are not signed in!" }))
@@ -403,9 +407,54 @@ app.get('/api/users/:id', (req, res) => {
   })
 })
 
+app.get('/api/users/subscriptions/:id', (req, res) => {
+    const sql = "SELECT * FROM subscribers WHERE userTo = '" + req.params.id + "'"
+    const query = con.query(sql, (err, results) => {
+      if (err) throw err
+      res.setHeader('Content-Type', 'application/json')
+
+      if(results.length == 0) {
+        res.status(400).send(JSON.stringify({status: 400, response: "Invalid username"}));
+      } else {
+        res.send(JSON.stringify({ status: 200, error: null, response: results}))
+      }
+    })
+})
+
+function getSubscriptionsUser(username) {
+    const sql = "SELECT * FROM subscribers WHERE userTo = '" + username + "'"
+    const query = con.query(sql, (err, results) => {
+      if (err) throw err
+      return results;
+    })
+}
+
 // show all videos
 app.get('/api/video', (req, res) => {
   const sql = 'SELECT uploadedBy, title, description, category, uploadDate, views, duration, url, tags FROM videos'
+  const query = con.query(sql, (err, results) => {
+    if (err) throw err
+    // videoArray = validator.escape(results);
+    res.setHeader('Content-Type', 'application/json')
+    res.send(JSON.stringify({ status: 200, error: null, response: results }))
+    // videoArray = validator.escape(results);
+  })
+})
+
+app.get('/api/video/latest', (req, res) => {
+  const sql = "SELECT uploadedBy, title, category, uploadDate, views, duration, url, tags FROM videos WHERE privacy = '1' ORDER BY uploadDate DESC LIMIT 30"
+  const query = con.query(sql, (err, results) => {
+    if (err) throw err
+    // videoArray = validator.escape(results);
+    res.setHeader('Content-Type', 'application/json')
+    res.send(JSON.stringify({ status: 200, error: null, response: results }))
+    // videoArray = validator.escape(results);
+  })
+})
+
+// show all videos
+app.get('/api/video/recommended', (req, res) => {
+  const sql = "SELECT uploadedBy, title, category, uploadDate, views, privacy, duration, url, tags FROM videos WHERE views > 10 AND privacy = '1' ORDER BY RAND() LIMIT 30"
   const query = con.query(sql, (err, results) => {
     if (err) throw err
     // videoArray = validator.escape(results);
@@ -467,10 +516,23 @@ app.put('/api/update/video/', (req, res) => {
 
 // Delete video
 app.delete('/api/delete/video/', (req, res) => {
-  const sql = "DELETE FROM videos WHERE url='" + req.query.videoUrl + "' AND uploadedBy='"+req.query.username+"'"
-  const query = con.query(sql, (err, results) => {
-    if (err) throw err
-    res.setHeader('Content-Type', 'application/json')
-    res.send(JSON.stringify({ status: 200, error: null, response: results }))
-  })
+  try {
+    let userLoggedIn = req.session.user.userLoggedIn; 
+    if(userLoggedIn == "undefined") {
+      res.setHeader('Content-Type', 'application/json')
+      res.status(200).send(JSON.stringify({ message: "You are not signed in!" }))
+    } else {
+      let givenVideoUrl = sanitizeHtml(req.query.videoUrl);
+      let userLoggedIn = req.session.user.userLoggedIn; 
+      console.log(userLoggedIn + "accessed the update video page");
+      const sql = "DELETE FROM videos WHERE url='" + givenVideoUrl + "' AND uploadedBy='"+userLoggedIn+"'"
+      const query = con.query(sql, (err, results) => {
+        if (err) throw err
+        res.setHeader('Content-Type', 'application/json')
+        res.send(JSON.stringify({ status: 200, error: null, response: results }))
+      })
+    }
+  } catch (err) {
+    res.status(400).send(JSON.stringify({ message: "You are not signed in!" }))
+  }
 })

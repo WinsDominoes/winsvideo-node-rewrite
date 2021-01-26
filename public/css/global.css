@@ -1,0 +1,27 @@
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    text-decoration: none;
+    color: black;
+}
+
+.list-group-item {
+    padding: 0;
+}
+
+#menu-toggle {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    overflow: hidden;
+    outline: none;
+    padding-top: 6px;
+}
+
+#logo {
+    height: 35px;
+    margin-left: 8px;
+}
