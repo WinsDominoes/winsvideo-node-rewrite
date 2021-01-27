@@ -431,18 +431,30 @@ function getSubscriptionsUser(username) {
 
 // show all videos
 app.get('/api/video', (req, res) => {
-  const sql = 'SELECT uploadedBy, title, description, category, uploadDate, views, duration, url, tags FROM videos'
+  const sql = "SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1'"
   const query = con.query(sql, (err, results) => {
     if (err) throw err
     // videoArray = validator.escape(results);
     res.setHeader('Content-Type', 'application/json')
-    res.send(JSON.stringify({ status: 200, error: null, response: results }))
+    res.send(JSON.stringify({ status: 200, error: null, response: results}))
+    // videoArray = validator.escape(results);
+  })
+})
+
+// show all thumbnails
+app.get('/api/video/thumbnails', (req, res) => {
+  const sql = 'SELECT * FROM thumbnails WHERE selected=1'
+  const query = con.query(sql, (err, results) => {
+    if (err) throw err
+    // videoArray = validator.escape(results);
+    res.setHeader('Content-Type', 'application/json')
+    res.send(JSON.stringify({ status: 200, error: null, thumbnails: results }))
     // videoArray = validator.escape(results);
   })
 })
 
 app.get('/api/video/latest', (req, res) => {
-  const sql = "SELECT uploadedBy, title, category, uploadDate, views, duration, url, tags FROM videos WHERE privacy = '1' ORDER BY uploadDate DESC LIMIT 30"
+  const sql = "SELECT * FROM videos WHERE privacy = '1' ORDER BY uploadDate DESC LIMIT 30"
   const query = con.query(sql, (err, results) => {
     if (err) throw err
     // videoArray = validator.escape(results);
@@ -454,7 +466,8 @@ app.get('/api/video/latest', (req, res) => {
 
 // show all videos
 app.get('/api/video/recommended', (req, res) => {
-  const sql = "SELECT uploadedBy, title, category, uploadDate, views, privacy, duration, url, tags FROM videos WHERE views > 10 AND privacy = '1' ORDER BY RAND() LIMIT 30"
+  // const sql = "SELECT * FROM videos WHERE views > 10 AND privacy = '1' ORDER BY RAND() LIMIT 30"
+  const sql = "SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1' ORDER BY RAND() LIMIT 36"
   const query = con.query(sql, (err, results) => {
     if (err) throw err
     // videoArray = validator.escape(results);
