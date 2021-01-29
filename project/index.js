@@ -50,10 +50,20 @@ app.listen(port, () =>
   console.log(`App is listening on port ${port}.`)
 )
 
-// app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => {
   readFile('./html/index.html', 'utf8', (err, html) => {
+    if (err) {
+      res.status(500).send('Page not available')
+    }
+
+    res.send(html)
+  })
+})
+
+app.get('/upload', (req, res) => {
+  readFile('./html/upload.html', 'utf8', (err, html) => {
     if (err) {
       res.status(500).send('Page not available')
     }
