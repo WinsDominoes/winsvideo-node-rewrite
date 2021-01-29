@@ -1,0 +1,221 @@
+a {
+    
+    color: black;
+}
+
+a:hover {
+    
+    color: black;
+}
+
+.list-group-item {
+    padding: 0;
+}
+
+#menu-toggle {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    overflow: hidden;
+    outline: none;
+    padding-top: 10px;
+}
+
+#logo {
+    height: 35px;
+    margin-left: 8px;
+}
+
+.column {
+    flex-grow: 1;
+    width: 100%; 
+    background-color: #fff;
+    min-height: 100px;
+    padding: 20px;
+    /* box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; */
+    margin-top: 15px;
+    display: inline-block;
+    border: 1px solid #e8e8e8;
+}
+
+.sticky.is-sticky {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
+
+#page-content-wrapper {
+    margin-top: 56.5px;
+}
+
+#sidebar-wrapper {
+    margin-top: 56.5px;
+}
+
+#searchBar {
+    flex: 1;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    width: 600px;
+    max-width: 600px;
+    color: #111;
+    padding: 2px 6px;
+    font-size: 14px;
+    font-weight: 100;
+    border: 1px solid #ccc;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    border-right: none;
+    height: 32px;
+    box-shadow: #eee 0px 1px 2px 0px inset;
+    border-radius: 0px;
+}
+
+#searchButton {
+    height: 32px;
+    background-color: #f8f8f8;
+    border: 1px solid #d3d3d3;
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+    cursor: pointer;
+    width: 65px;
+    color: rgb(100, 100, 100);
+    padding: 3px 0 0 0;
+}
+
+#uploadButton {
+    color: #333;
+    background-color: #f8f8f8;
+    display: inline-block;
+    height: 28px;
+    border: solid 1px #d3d3d3;
+    padding: 0 10px;
+    outline: 0;
+    font-weight: bold;
+    font-size: 11px;
+    text-decoration: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    line-height: normal;
+    vertical-align: middle;
+    cursor: pointer;
+    overflow: visible;
+    border-radius: 2px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+}
+
+#uploadButton:hover {
+    background-color: #f0f0f0;
+}
+
+#signInButton {
+    background: #167ac6;
+    color: #fff;
+    display: inline-block;
+    height: 28px;
+    border: solid 1px #167ac6;
+    padding: 0 10px;
+    outline: 0;
+    font-weight: bold;
+    font-size: 11px;
+    text-decoration: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    line-height: normal;
+    vertical-align: middle;
+    cursor: pointer;
+    *overflow: visible;
+    border-radius: 2px;
+    box-shadow: 0 1px 0 rgb(0 0 0 / 5%);
+}
+
+#signInButton:hover {
+    background-color: #126db3;
+}
+
+.videoGrid {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.videoGrid {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.suggestions .videoGridItem {
+    display: flex;
+    height: auto;
+}
+
+.videoGridItem {
+    height: 200px;
+    margin-right: 8px;
+    margin-bottom: 24px;
+}
+
+.videoGridItem .thumbnail {
+    width: 210px;
+    height: 110px;
+    position: relative;
+}
+
+.suggestions .videoGridItem .thumbnail {
+    margin-right: 8px;
+}
+
+.videoGridItem .thumbnail img {
+    width: 100%;
+    height: 100%;
+}
+
+.videoGridItem .thumbnail .duration {
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    margin: 4px;
+    color: #fff;
+    background-color: rgba(17,17,17,0.8);
+    opacity: 0.8;
+    padding: 2px 4px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 12px;
+}
+
+.videoGridItem .details {
+    padding-right: 24px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    width: 210px;
+}
+
+.suggestions .videoGridItem .details {
+    padding-right: 0;
+    flex: 1;
+}
+
+.videoGridItem .details .title {
+    margin: 8px 0;
+    max-height: 32px;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    color: #212529;
+}
+
+.videoGridItem .details .username,
+.videoGridItem .details .stats {
+    color: rgba(17,17,17,0.6);
+    font-size: 13px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
