@@ -1,39 +1,38 @@
-// declare functions 
-function formatNumber(num) {
-    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+// declare functions
+function formatNumber (num) {
+  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
-// api url 
-const api_url = "http://localhost:3000/api/video/recommended"; 
+// api url
+const api_url = 'http://localhost:3000/api/video/recommended'
 
-// Defining async function 
-async function getapi(url) { 
-	
-	// Storing response 
-	const response = await fetch(url); 
-	
-	// Storing data in form of JSON 
-	var data = await response.json(); 
-	console.log(data.response); 
-	if (response) { 
-		hideloader(); 
-	} 
-	show(data); 
-} 
-// Calling that async function 
-getapi(api_url); 
+// Defining async function
+async function getapi (url) {
+  // Storing response
+  const response = await fetch(url)
 
-// Function to hide the loader 
-function hideloader() { 
-	document.getElementById('loading').style.display = 'none'; 
-} 
-// Function to define innerHTML for HTML table 
-function show(data) { 
-    let tab = ``; 
-         
-	// Loop to access all rows 
-	for (let r of data.response) { 
-        tab += `
+  // Storing data in form of JSON
+  const data = await response.json()
+  console.log(data.response)
+  if (response) {
+    hideloader()
+  }
+  show(data)
+}
+// Calling that async function
+getapi(api_url)
+
+// Function to hide the loader
+function hideloader () {
+  document.getElementById('loading').style.display = 'none'
+}
+// Function to define innerHTML for HTML table
+function show (data) {
+  let tab = ''
+
+  // Loop to access all rows
+  for (const r of data.response) {
+    tab += `
         <div class="videoGridItem">
             <a href="watch.html?v=${r.url}">
                 <div class="thumbnail">
@@ -54,8 +53,8 @@ function show(data) {
                         <span class="timeStamp">${r.uploadDate}</span>
                     </div>        
                 </div>
-            </div>`; 
-	} 
-	// Setting innerHTML as tab variable 
-	document.getElementById("videoGrid").innerHTML = tab; 
-} 
+            </div>`
+  }
+  // Setting innerHTML as tab variable
+  document.getElementById('videoGrid').innerHTML = tab
+}
