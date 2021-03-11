@@ -40,6 +40,9 @@ const con = mysql.createConnection({
   database: config.dbInfo.database
 })
 
+// set the view engine to ejs
+app.set('view engine', 'ejs');
+
 app.listen(port, () =>
   console.log(`App is listening on port ${port}.`)
 )
@@ -47,17 +50,15 @@ app.listen(port, () =>
 app.use(express.static(__dirname + '/public'))
 
 app.get('/', (req, res) => {
-  readFile('./html/index.html', 'utf8', (err, html) => {
-    if (err) {
-      res.status(500).send('Page not available')
+    try {
+      res.render('index', {data : {userSignedIn: req.session.user.userLoggedIn}})
+    } catch (err) {
+      res.render('index', {data : {userSignedIn: ""}})
     }
-
-    res.send(html)
-  })
 })
 
-app.get('/upload', (req, res) => {
-  readFile('./html/upload.html', 'utf8', (err, html) => {
+app.get('/login', (req, res) => {
+  readFile('./html/login.html', 'utf8', (err, html) => {
     if (err) {
       res.status(500).send('Page not available')
     }
@@ -246,18 +247,6 @@ app.post('/upload', async (req, res) => {
   }
 })
 
-function getUserSubscriberCount(username) {
-  con.connect(function (err) {
-    const sql = 'SELECT * FROM subscribers WHERE userTo=:userTo'
-    con.query(sql, function (err, result) {
-      // console.dir(result);
-
-      const latestID = result.insertId
-      return latestID
-    })
-  })
-}
-
 // show subscribers
 app.get('/api/subscribers/users/:id', (req, res) => {
   const sql = "SELECT * FROM subscribers WHERE userTo='" + req.params.id + "'"
@@ -399,8 +388,8 @@ app.get('/api/users', (req, res) => {
 })
 
 // show single user
-app.get('/api/users/:id', (req, res) => {
-  const sql = "SELECT username,signUpDate,keywords,about,country FROM users WHERE username = '" + req.params.id + "'"
+app.get('/api/users/info/:id', (req, res) => {
+  const sql = "SELECT username,signUpDate,keywords,about,country,profilePic,banner,publicEmail,badges,country FROM users WHERE username = '" + req.params.id + "'"
   const query = con.query(sql, (err, results) => {
     if (err) throw err
     res.setHeader('Content-Type', 'application/json')
