@@ -462,7 +462,7 @@ app.get('/api/video/latest', (req, res) => {
 // show all videos
 app.get('/api/video/recommended', (req, res) => {
   // const sql = "SELECT * FROM videos WHERE views > 10 AND privacy = '1' ORDER BY RAND() LIMIT 30"
-  const sql = "SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1' ORDER BY RAND() LIMIT 36"
+  const sql = "SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1' ORDER BY RAND() LIMIT 6"
   const query = con.query(sql, (err, results) => {
     if (err) throw err
     // videoArray = validator.escape(results);
