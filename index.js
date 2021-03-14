@@ -9,6 +9,7 @@ const config = require('./config.json')
 const sanitizeHtml = require('sanitize-html')
 const mime = require('mime-types')
 const session = require('express-session')
+const path = require('path')
 
 const app = express()
 
@@ -41,20 +42,20 @@ const con = mysql.createConnection({
 })
 
 // set the view engine to ejs
-app.set('view engine', 'ejs');
+app.set('view engine', 'ejs')
 
 app.listen(port, () =>
   console.log(`App is listening on port ${port}.`)
 )
 
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/', (req, res) => {
-    try {
-      res.render('index', {data : {userSignedIn: req.session.user.userLoggedIn}})
-    } catch (err) {
-      res.render('index', {data : {userSignedIn: ""}})
-    }
+  try {
+    res.render('index', { data: { userSignedIn: req.session.user.userLoggedIn } })
+  } catch (err) {
+    res.render('index', { data: { userSignedIn: '' } })
+  }
 })
 
 app.get('/login', (req, res) => {
@@ -147,15 +148,19 @@ app.post('/upload', async (req, res) => {
       }
 
       const insertVideoInfo = async () => {
-        con.connect(function (err) {
+        con.connect((err) => {
+          if (err) {
+            return console.error(err)
+          }
           console.log('Video Upload database: Connected!')
 
           const sql = "INSERT INTO videos (title, uploadedBy, description, tags, privacy, category, filePath, url) VALUES ('" + name + "', '" + req.session.user.userLoggedIn + "', '" + description + "', '" + tags + "', '" + privacy + "', '1', 'uploads/videos/" + id + ".mp4', '" + videoId + "')"
-          con.query(sql, function (err, result) {
+          con.query(sql, (err, result) => {
+            if (err) throw err
             console.log('Video Info inserted')
 
             console.dir(result)
-            const proccessThumbnails = async () => {
+            const processThumbnails = async () => {
               const thumbnailId = rand(20, 'aA0')
               const latestVideoId = result.insertId
 
@@ -167,7 +172,8 @@ app.post('/upload', async (req, res) => {
                   filename: thumbnailId + '-' + id + '.png'
                 })
 
-              con.connect(function (err) {
+              con.connect((err) => {
+                if (err) throw err
                 console.log('Thumbnail Upload Database: Connected')
                 const thumbnailVideoId = rand(12, 'aA0')
                 const sql = 'INSERT INTO thumbnails (videoId, filePath, selected, url) VALUES ?'
@@ -176,7 +182,8 @@ app.post('/upload', async (req, res) => {
                   [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_2.png', '0', thumbnailVideoId],
                   [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_3.png', '0', thumbnailVideoId]
                 ]
-                con.query(sql, [params], function (err, result) {
+                con.query(sql, [params], (err) => {
+                  if (err) throw err
                   console.log('Thumbnail Video inserted')
                   // console.dir(result)
                   console.dir(params)
@@ -185,9 +192,10 @@ app.post('/upload', async (req, res) => {
             }
 
             const calculateVideoDuration = async () => {
-              await ffmpeg.ffprobe(outFilename, function (err, metadata) {
+              await ffmpeg.ffprobe(outFilename, (err, metadata) => {
+                if (err) throw err
                 const latestVideoId = result.insertId
-                const videoDuration = metadata.streams[0].duration
+                // const videoDuration = metadata.streams[0].duration <--- commented out unused variable
 
                 const duration = metadata.streams[0].duration
                 let hours = Math.floor(duration / 3600)
@@ -202,7 +210,8 @@ app.post('/upload', async (req, res) => {
 
                 console.log(metadata)
                 const sql = "UPDATE videos SET duration = '" + finalDuration + "' WHERE id = '" + latestVideoId + "'"
-                con.query(sql, function (err, result) {
+                con.query(sql, (err, result) => {
+                  if (err) throw err
                   console.log(result)
                   // console.dir(result)
                 })
@@ -211,9 +220,7 @@ app.post('/upload', async (req, res) => {
 
             const deleteInputVideo = async () => {
               await fs.unlink(inFilename, (err) => {
-                if (err) {
-                  throw err
-                }
+                if (err) throw err
 
                 console.log('Video: ' + inFilename + ' is now deleted from the tmp folder')
 
@@ -233,7 +240,7 @@ app.post('/upload', async (req, res) => {
               })
             }
 
-            setTimeout(proccessThumbnails, 2000)
+            setTimeout(processThumbnails, 2000)
             setTimeout(calculateVideoDuration, 3000)
             setTimeout(deleteInputVideo, 4000)
           })
@@ -250,7 +257,7 @@ app.post('/upload', async (req, res) => {
 // show subscribers
 app.get('/api/subscribers/users/:id', (req, res) => {
   const sql = "SELECT * FROM subscribers WHERE userTo='" + req.params.id + "'"
-  const query = con.query(sql, (err, results) => {
+  con.query(sql, (err, results) => {
     if (err) throw err
     res.setHeader('Content-Type', 'application/json')
     res.send(JSON.stringify({ username: req.params.id, subscribers: results.length }))
@@ -287,12 +294,15 @@ app.post('/api/users/create/', function (req, res) {
 
   if (username !== 'undefined') {
     if (password === confirmPassword) {
-      con.connect(function (err) {
+      con.connect((err) => {
+        if (err) throw err
         const sql = "SELECT username FROM users WHERE username = '" + username + "'"
-        con.query(sql, function (err, result) {
+        con.query(sql, (err, result) => {
+          if (err) throw err
           if (result.length === 0) {
             const sql = 'INSERT INTO users (firstName, lastName, username, email, password, profilePic, banner) VALUES (?, ?, ?, ?, ?, ?, ?)'
-            con.query(sql, [firstName, lastName, username, email, password, profilePic, banner], function (err, result) {
+            con.query(sql, [firstName, lastName, username, email, password, profilePic, banner], (err, result) => {
+              if (err) throw err
               console.log(result)
               return res.send({ error: false, message: 'You are registered!' })
             })
@@ -327,9 +337,11 @@ app.post('/api/users/login/', function (req, res) {
   // Printing the output on the console
   console.log('hash : ' + genHash)
 
-  con.connect(function (err) {
+  con.connect((err) => {
+    if (err) throw err
     const sql = 'SELECT * FROM users WHERE username = ?'
-    con.query(sql, [usernameInput], function (err, result) {
+    con.query(sql, [usernameInput], (err, result) => {
+      if (err) throw err
       console.log(result[0].password)
       const passwordSelected = result[0].password
       if (passwordSelected === genHash) {
@@ -380,7 +392,7 @@ app.get('/api/users/logout', (req, res) => {
 // show all users
 app.get('/api/users', (req, res) => {
   const sql = 'SELECT username, signUpDate, keywords, about, country FROM users'
-  const query = con.query(sql, (err, results) => {
+  con.query(sql, (err, results) => {
     if (err) throw err
     res.setHeader('Content-Type', 'application/json')
     res.status(200).send(JSON.stringify({ status: 200, error: null, response: results }))
@@ -390,7 +402,7 @@ app.get('/api/users', (req, res) => {
 // show single user
 app.get('/api/users/info/:id', (req, res) => {
   const sql = "SELECT username,signUpDate,keywords,about,country,profilePic,banner,publicEmail,badges,country FROM users WHERE username = '" + req.params.id + "'"
-  const query = con.query(sql, (err, results) => {
+  con.query(sql, (err, results) => {
     if (err) throw err
     res.setHeader('Content-Type', 'application/json')
 
@@ -404,7 +416,7 @@ app.get('/api/users/info/:id', (req, res) => {
 
 app.get('/api/users/subscriptions/:id', (req, res) => {
   const sql = "SELECT * FROM subscribers WHERE userTo = '" + req.params.id + "'"
-  const query = con.query(sql, (err, results) => {
+  con.query(sql, (err, results) => {
     if (err) throw err
     res.setHeader('Content-Type', 'application/json')
 
@@ -415,19 +427,20 @@ app.get('/api/users/subscriptions/:id', (req, res) => {
     }
   })
 })
-
-function getSubscriptionsUser(username) {
+/* Commented out due to function not being used
+function getSubscriptionsUser (username) {
   const sql = "SELECT * FROM subscribers WHERE userTo = '" + username + "'"
-  const query = con.query(sql, (err, results) => {
+  con.query(sql, (err, results) => {
     if (err) throw err
     return results
   })
 }
+ */
 
 // show all videos
 app.get('/api/video', (req, res) => {
   const sql = "SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1'"
-  const query = con.query(sql, (err, results) => {
+  con.query(sql, (err, results) => {
     if (err) throw err
     // videoArray = validator.escape(results);
     res.setHeader('Content-Type', 'application/json')
@@ -439,7 +452,7 @@ app.get('/api/video', (req, res) => {
 // show all thumbnails
 app.get('/api/video/thumbnails', (req, res) => {
   const sql = 'SELECT * FROM thumbnails WHERE selected=1'
-  const query = con.query(sql, (err, results) => {
+  con.query(sql, (err, results) => {
     if (err) throw err
     // videoArray = validator.escape(results);
     res.setHeader('Content-Type', 'application/json')
@@ -450,7 +463,7 @@ app.get('/api/video/thumbnails', (req, res) => {
 
 app.get('/api/video/latest', (req, res) => {
   const sql = "SELECT * FROM videos WHERE privacy = '1' ORDER BY uploadDate DESC LIMIT 30"
-  const query = con.query(sql, (err, results) => {
+  con.query(sql, (err, results) => {
     if (err) throw err
     // videoArray = validator.escape(results);
     res.setHeader('Content-Type', 'application/json')
@@ -463,7 +476,7 @@ app.get('/api/video/latest', (req, res) => {
 app.get('/api/video/recommended', (req, res) => {
   // const sql = "SELECT * FROM videos WHERE views > 10 AND privacy = '1' ORDER BY RAND() LIMIT 30"
   const sql = "SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1' ORDER BY RAND() LIMIT 6"
-  const query = con.query(sql, (err, results) => {
+  con.query(sql, (err, results) => {
     if (err) throw err
     // videoArray = validator.escape(results);
     res.setHeader('Content-Type', 'application/json')
@@ -475,7 +488,7 @@ app.get('/api/video/recommended', (req, res) => {
 // show single video
 app.get('/api/video/:id', (req, res) => {
   const sql = "SELECT uploadedBy, title, description, category, uploadDate, views, duration, url, tags, filePath FROM videos WHERE url = '" + req.params.id + "' AND privacy = '1'"
-  const query = con.query(sql, (err, results) => {
+  con.query(sql, (err, results) => {
     if (err) throw err
     res.setHeader('Content-Type', 'application/json')
     res.send(JSON.stringify({ status: 200, error: null, response: results }))
@@ -493,7 +506,7 @@ app.put('/api/update/video/', (req, res) => {
       console.log(userLoggedIn + 'accessed the update video page')
       const givenVideoUrl = sanitizeHtml(req.query.videoUrl)
       const validateUsername = "SELECT * FROM videos WHERE url = '" + givenVideoUrl + "' AND uploadedBy = '" + userLoggedIn + "'"
-      const query2 = con.query(validateUsername, (err, resultsForValidation) => {
+      con.query(validateUsername, (err, resultsForValidation) => {
         if (err) throw err
 
         const selectedUsername = resultsForValidation[0].username
@@ -508,7 +521,7 @@ app.put('/api/update/video/', (req, res) => {
           const tags = sanitizeHtml(req.body.tags)
 
           const sql = "UPDATE videos SET title='" + title + "', description='" + description + "', privacy='" + privacy + "', category='" + category + "', tags='" + tags + "' WHERE url='" + givenVideoUrl + "' AND uploadedBy='" + userLoggedIn + "'"
-          const query = con.query(sql, (err, results) => {
+          con.query(sql, (err, results) => {
             if (err) throw err
             res.setHeader('Content-Type', 'application/json')
             res.status(200).send(JSON.stringify({ status: 200, error: err, response: results }))
@@ -533,7 +546,7 @@ app.delete('/api/delete/video/', (req, res) => {
       const userLoggedIn = req.session.user.userLoggedIn
       console.log(userLoggedIn + 'accessed the update video page')
       const sql = "DELETE FROM videos WHERE url='" + givenVideoUrl + "' AND uploadedBy='" + userLoggedIn + "'"
-      const query = con.query(sql, (err, results) => {
+      con.query(sql, (err, results) => {
         if (err) throw err
         res.setHeader('Content-Type', 'application/json')
         res.send(JSON.stringify({ status: 200, error: null, response: results }))
