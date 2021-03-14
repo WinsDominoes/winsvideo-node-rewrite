@@ -1,18 +1,12 @@
-const { Router } = require('./Router')
+const Router = require('./Router')
 
 class API extends Router {
   constructor (Database) {
     super()
     this.Database = Database
 
-    // Simple API middleware to set the content-type everytime
-    const APIMiddleware = (req, res, next) => {
-      res.setHeader('Content-Type', 'application/json')
-      next()
-    }
-
     // Return all users
-    this.get('/api/users', APIMiddleware, (req, res) => {
+    this.get('/api/users', this.middleware.APIMiddleware, (req, res) => {
       this.Database.getUsers((err, results) => {
         if (err) throw err
         res.setHeader('Content-Type', 'application/json')
@@ -21,7 +15,7 @@ class API extends Router {
     })
 
     // Create user
-    this.post('/users/create', APIMiddleware, (req, res) => {
+    this.post('/users/create', this.middleware.APIMiddleware, (req, res) => {
       const user = {
         firstName: this.sanitizeHTML(req.body.firstName),
         lastName: this.sanitizeHTML(req.body.lastName),
@@ -45,7 +39,7 @@ class API extends Router {
     })
 
     // Log a user in
-    this.post('/api/users/login/', APIMiddleware, function (req, res) {
+    this.post('/api/users/login/', this.middleware.APIMiddleware, function (req, res) {
       const usernameInput = this.sanitizeHTML(req.body.username)
       const passwordInput = this.sanitizeHTML(req.body.password)
       this.Database.login(usernameInput, passwordInput, (err, loggedIn) => {
@@ -63,7 +57,7 @@ class API extends Router {
     })
 
     // Check if user is logged in
-    this.get('/api/users/loggedIn', APIMiddleware, (req, res) => {
+    this.get('/api/users/loggedIn', this.middleware.APIMiddleware, (req, res) => {
       try {
         const userLoggedIn = req.session.user.userLoggedIn
         if (!userLoggedIn) {
@@ -77,7 +71,7 @@ class API extends Router {
     })
 
     // Logout user
-    this.post('/users/logout', APIMiddleware, (req, res) => {
+    this.post('/users/logout', this.middleware.APIMiddleware, (req, res) => {
       try {
         const userLoggedIn = req.session.user.userLoggedIn
         if (userLoggedIn === 'undefined') {
@@ -92,7 +86,7 @@ class API extends Router {
     })
 
     // Show single user
-    this.get('/api/users/info/:id', APIMiddleware, (req, res) => {
+    this.get('/api/users/info/:id', this.middleware.APIMiddleware, (req, res) => {
       this.Database.getUser(req.params.id, (err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting user: ' + err.error })
         else return res.send({ status: 200, error: null, response: results })
@@ -100,7 +94,7 @@ class API extends Router {
     })
 
     // Show user's subscribers
-    this.get('/api/users/subscribers/:id', APIMiddleware, (req, res) => {
+    this.get('/api/users/subscribers/:id', this.middleware.APIMiddleware, (req, res) => {
       this.Database.getSubscriptions(req.params.id, (err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting user\'s subscriptions: ' + err.error })
         else return res.send(JSON.stringify({ status: 200, error: null, response: results }))
@@ -108,7 +102,7 @@ class API extends Router {
     })
 
     // Show all videos
-    this.get('/api/video', APIMiddleware, (req, res) => {
+    this.get('/api/video', this.middleware.APIMiddleware, (req, res) => {
       this.Database.getAllVideos((err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
         else return res.send(JSON.stringify({ status: 200, error: null, response: results }))
@@ -116,7 +110,7 @@ class API extends Router {
     })
 
     // Show all video thumbnails
-    this.get('/api/video/thumbnails', APIMiddleware, (req, res) => {
+    this.get('/api/video/thumbnails', this.middleware.APIMiddleware, (req, res) => {
       this.Database.getVideoThumbnails((err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
         res.send(JSON.stringify({ status: 200, error: null, response: results }))
@@ -124,7 +118,7 @@ class API extends Router {
     })
 
     // Show latest videos
-    this.get('/api/video/latest', APIMiddleware, (req, res) => {
+    this.get('/api/video/latest', this.middleware.APIMiddleware, (req, res) => {
       this.Database.getLatestVideos((err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
         // videoArray = validator.escape(results);
@@ -134,7 +128,7 @@ class API extends Router {
     })
 
     // Show recommended videos
-    this.get('/api/video/recommended', APIMiddleware, (req, res) => {
+    this.get('/api/video/recommended', this.middleware.APIMiddleware, (req, res) => {
       this.Database.getRecommendedVideos((err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
         // videoArray = validator.escape(results);
@@ -144,14 +138,14 @@ class API extends Router {
     })
 
     // Show video by ID
-    this.get('/api/video/:id', APIMiddleware, (req, res) => {
+    this.get('/api/video/:id', this.middleware.APIMiddleware, (req, res) => {
       this.Database.getVideo(req.params.id, (err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
         res.send(JSON.stringify({ status: 200, error: null, response: results }))
       })
     })
 
-    this.put('/api/update/video/', APIMiddleware, (req, res) => {
+    this.put('/api/update/video/', this.middleware.APIMiddleware, (req, res) => {
       try {
         const userLoggedIn = req.session.user.userLoggedIn
         if (req.session.user.userLoggedIn === 'undefined') {
@@ -183,7 +177,7 @@ class API extends Router {
       }
     })
 
-    this.delete('/api/delete/video', APIMiddleware, (req, res) => {
+    this.delete('/api/delete/video', this.middleware.APIMiddleware, (req, res) => {
       try {
         const userLoggedIn = req.session.user.userLoggedIn
         if (userLoggedIn === 'undefined') {
