@@ -15,14 +15,18 @@
     clear: both;
 }
 
-.videoGrid {
-    display: flex;
-    flex-wrap: wrap;
+#menu {  
+    text-align: center;
+}
+
+.pills {
+    display: inline-block;
 }
 
 .videoGrid {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .suggestions .videoGridItem {
