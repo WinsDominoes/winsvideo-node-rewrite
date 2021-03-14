@@ -1,6 +1,5 @@
 const mysql = require('mysql')
 const crypto = require('crypto')
-const config = require('../config.json')
 class Database {
   constructor (database) {
     this.con = mysql.createConnection(database)
