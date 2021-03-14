@@ -17,8 +17,8 @@ console.log('Starting WinsVideo...')
 /*
 Initialize our Database
 */
-const DB = require('./Database')
 
+const DB = require('./Database')
 const Database = new DB(config.dbInfo)
 
 /*
@@ -39,6 +39,9 @@ app.use(morgan('dev'))
 app.use(fileUpload({
   createParentPath: true
 }))
+
+// Set our view engine to EJS
+app.set('view engine', 'ejs')
 
 // Router
 app.use('/api', router.API(Database))
