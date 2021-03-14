@@ -3,7 +3,9 @@ Main file for WinsVideo
 */
 
 const express = require('express')
-const router = require('./routes/Router')
+const Base = require('./routes/Base')
+const API = require('./routes/API')
+const Upload = require('./routes/Upload')
 const session = require('express-session')
 const fileUpload = require('express-fileupload')
 const rand = require('random-id')
@@ -44,9 +46,9 @@ app.use(fileUpload({
 app.set('view engine', 'ejs')
 
 // Router
-app.use('/api', new router.API(Database))
-app.use('/upload', new router.Upload())
-app.use('/', new router.Base()) // Include our Base router last since this handles errors
+app.use('/api', new API(Database))
+app.use('/upload', new Upload())
+app.use('/', new Base()) // Include our Base router last since this handles errors
 
 // Start Express
 const port = process.env.PORT || config.webserver.port || 3000
