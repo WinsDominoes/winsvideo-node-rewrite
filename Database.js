@@ -141,6 +141,34 @@ class Database {
       })
     }
 
+    this.insertVideo = (title, description, privacy, category, tags, url, username, file, callback) => {
+      if (!this.connected) return callback(error('DATABASE NOT CONNECTED'))
+      this.con.query(`INSERT INTO videos (title, uploadedBy, description, tags, privacy, category, filePath, url) VALUES ('${title}','${username}','${description}','${tags}','${privacy}', '${category}', '${file}',`, (err, results) => {
+        if (err) return callback(err)
+        else return callback(null, results)
+      })
+    }
+
+    this.insertThumbnail = (id, latestVideoId, thumbnailId, thumbnailVideoId, callback) => {
+      const params = [
+        [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_1.png', '1', thumbnailVideoId],
+        [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_2.png', '0', thumbnailVideoId],
+        [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_3.png', '0', thumbnailVideoId]
+      ]
+      this.con.query('INSERT INTO thumbnails (videoId, filePath, selected, url) VALUES ?', [params], (err, results) => {
+        if (err) return callback(err)
+        else return callback(null, results)
+      })
+    }
+
+    this.setVideoDuration = (id, duration, callback) => {
+      if (!this.connected) return callback(error('DATABASE NOT CONNECTED'))
+      this.con.query(`UPDATE videos SET duration='${duration}' WHERE id='${id}'`, (err, results) => {
+        if (err) return callback(err)
+        else return callback(null, results)
+      })
+    }
+
     this.updateVideo = (title, description, privacy, category, tags, url, username, callback) => {
       if (!this.connected) return callback(error('DATABASE NOT CONNECTED'))
       this.con.query(`UPDATE videos SET title='${title}', description='${description}', privacy='${privacy}', category='${category}', tags='${tags}' WHERE url='${url}' AND uploadedBy='${username}'`, (err, results) => {
