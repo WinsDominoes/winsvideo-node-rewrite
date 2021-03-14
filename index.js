@@ -44,9 +44,9 @@ app.use(fileUpload({
 app.set('view engine', 'ejs')
 
 // Router
-app.use('/api', router.API(Database))
-app.use('/upload', router.Upload)
-app.use('/', router.Base) // Include our Base router last since this handles errors
+app.use('/api', new router.API(Database))
+app.use('/upload', new router.Upload())
+app.use('/', new router.Base()) // Include our Base router last since this handles errors
 
 // Start Express
 const port = process.env.PORT || config.webserver.port || 3000
