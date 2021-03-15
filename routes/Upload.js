@@ -6,7 +6,7 @@ class Upload extends Router {
   constructor (Database) {
     super()
     this.Database = Database
-    this.post('/upload', async (req, res) => {
+    this.post('/', async (req, res) => {
       try {
         if (!req.files) {
           res.send({
