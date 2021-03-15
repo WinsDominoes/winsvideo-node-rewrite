@@ -1,12 +1,12 @@
 const Router = require('./Router')
 const mime = require('mime-types')
 const rand = require('random-id')
+const fs = require('fs');
 
 class Upload extends Router {
   constructor (Database) {
     super()
     this.post('/', async (req, res) => {
-      try {
         if (!req.files) {
           res.send({
             status: false,
@@ -27,11 +27,11 @@ class Upload extends Router {
           }
           console.log('Video File Type: ' + ext)
 
-          const name = this.sanitizeHTML(req.body.name)
-          const description = this.sanitizeHTML(req.body.description)
-          const privacy = this.sanitizeHTML(req.body.privacy)
-          const tags = this.sanitizeHTML(req.body.tags)
-          const category = this.sanitizeHTML(req.body.category)
+          const name = req.body.name
+          const description = req.body.description
+          const privacy = req.body.privacy
+          const tags = req.body.tags
+          const category = req.body.category
 
           if (category > 15) {
             res.status(500).send('Invalid category ID')
@@ -67,7 +67,8 @@ class Upload extends Router {
               })
           }
 
-          const userLoggedIn = req.session.user.userLoggedIn
+          // const userLoggedIn = req.session.user.userLoggedIn
+          const userLoggedIn = "wins_dominoes"
 
           if (userLoggedIn === 'undefined') {
             res.setHeader('Content-Type', 'application/json')
@@ -75,91 +76,98 @@ class Upload extends Router {
           }
 
           const insertVideoInfo = async () => {
-            Database.insertVideo(name, description, privacy, category, tags, videoId, req.session.user.userLoggedIn, 'uploads/videos/" + id + ".mp4', (err, result) => {
-              if (err) throw err
-              console.log('Video Info inserted')
+              console.log('Video Upload database: Connected!')
 
-              console.dir(result)
+              Database.insertVideo(name, description, privacy, category, tags, videoId, userLoggedIn, 'uploads/videos/"' + id + '".mp4', (err, result) => {
+              // Database.insertVideo(name, description, privacy, category, tags, videoId, userLoggedIn, '.aaaaaaaaaa', (err, result) => {
+                console.log('Video Info inserted')
 
-              const processThumbnails = async () => {
-                const thumbnailId = rand(20, 'aA0')
-                const latestVideoId = result.insertId
+                if(err) {
+                  console.log(err);
+                } else {
+                  console.log(result)
+                  console.log(result.insertId)
+                } 
 
-                await ffmpeg(outFilename)
-                  .screenshot({
-                    count: 3,
-                    folder: 'uploads/videos/thumbnails',
-                    size: '1280x720',
-                    filename: thumbnailId + '-' + id + '.png'
+                const processThumbnails = async () => {
+
+                  // console.log("OMG HELP PLS");
+
+                  const thumbnailId = rand(20, 'aA0')
+                  const latestVideoId = result.insertId
+
+                  await ffmpeg(outFilename)
+                    .screenshot({
+                      count: 3,
+                      folder: './uploads/videos/thumbnails',
+                      size: '1280x720',
+                      filename: thumbnailId + '-' + id + '.png'
+                    })
+
+                  const thumbnailVideoId = rand(12, 'aA0')
+                  Database.insertThumbnail(id, latestVideoId, thumbnailId, thumbnailVideoId, (err, results) => {
+                    if (err) throw err
+                    console.log('Thumbnail Video inserted')
                   })
 
-                const thumbnailVideoId = rand(12, 'aA0')
-                Database.insertThumbnail(id, latestVideoId, thumbnailId, thumbnailVideoId, (err, result) => {
-                  if (err) throw err
-                  console.log('Thumbnail Video inserted')
-                  console.dir(params)
-                })
-
-                const calculateVideoDuration = async () => {
-                  await ffmpeg.ffprobe(outFilename, (err, metadata) => {
-                    if (err) throw err
-                    const latestVideoId = result.insertId
-                    // const videoDuration = metadata.streams[0].duration <--- commented out unused variable
-
-                    const duration = metadata.streams[0].duration
-                    let hours = Math.floor(duration / 3600)
-                    let mins = Math.floor((duration - hours * 3600) / 60)
-                    let secs = Math.floor(duration % 60)
-                    hours = hours < 1 ? '' : hours + ':'
-                    mins = mins < 10 ? '0' + mins + ':' : mins + ':'
-                    secs = secs < 10 ? '0' + secs : secs
-                    const finalDuration = hours + mins + secs
-
-                    console.log(finalDuration)
-
-                    console.log(metadata)
-
-                    Database.setVideoDuration(latestVideoId, duration, (err, result) => {
+                  const calculateVideoDuration = async () => {
+                    await ffmpeg.ffprobe(outFilename, (err, metadata) => {
                       if (err) throw err
-                      console.log(result)
+                      const latestVideoId = result.insertId
+                      // const videoDuration = metadata.streams[0].duration <--- commented out unused variable
+
+                      const duration = metadata.streams[0].duration
+                      let hours = Math.floor(duration / 3600)
+                      let mins = Math.floor((duration - hours * 3600) / 60)
+                      let secs = Math.floor(duration % 60)
+                      hours = hours < 1 ? '' : hours + ':'
+                      mins = mins < 10 ? '0' + mins + ':' : mins + ':'
+                      secs = secs < 10 ? '0' + secs : secs
+                      const finalDuration = hours + mins + secs
+
+                      console.log(finalDuration)
+
+                      console.log(metadata)
+
+                      Database.setVideoDuration(latestVideoId, finalDuration, (err, result) => {
+                        if (err) throw err
+                        console.log(result)
+                      })
                     })
-                  })
-                }
+                  }
 
-                const deleteInputVideo = async () => {
-                  await fs.unlink(inFilename, (err) => {
-                    if (err) throw err
+                  const deleteInputVideo = async () => {
+                    await fs.unlink(inFilename, (err) => {
+                      if (err) throw err
 
-                    console.log('Video: ' + inFilename + ' is now deleted from the tmp folder')
+                      console.log('Video: ' + inFilename + ' is now deleted from the tmp folder')
 
-                    // send response
-                    res.send({
-                      status: true,
-                      message: 'Video is uploaded',
-                      data: {
-                        name: video.name,
-                        mimetype: video.mimetype,
-                        size: video.size,
-                        outputVideo: outFilename,
-                        inputVideo: inFilename,
-                        viewVideo: 'https://winsvideo.net/watch?v=' + videoId + ''
-                      }
+                      // send response
+                      res.send({
+                        status: true,
+                        message: 'Video is uploaded',
+                        data: {
+                          name: video.name,
+                          mimetype: video.mimetype,
+                          size: video.size,
+                          outputVideo: outFilename,
+                          inputVideo: inFilename,
+                          viewVideo: 'https://winsvideo.net/watch?v=' + videoId + ''
+                        }
+                      })
                     })
-                  })
+                  }     
+                  setTimeout(deleteInputVideo, 4000)
+                  setTimeout(calculateVideoDuration, 3000)
                 }
-
+                
                 setTimeout(processThumbnails, 2000)
-                setTimeout(calculateVideoDuration, 3000)
-                setTimeout(deleteInputVideo, 4000)
-              }
-            })
+              })
+              
           }
           setTimeout(convertToMp4, 500)
           setTimeout(insertVideoInfo, 1000)
         }
-      } catch (err) {
-        res.status(500).send(err)
-      }
     })
   }
 }

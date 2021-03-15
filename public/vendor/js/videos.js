@@ -44,10 +44,10 @@ function show (data) {
             </a>
             
             <div class="details">
-                <a href="watch.html?v=${r.url}">
+                <a href="watch?v=${r.url}">
                     <h3 class="title">${r.title}</h3>
                 </a>
-                <a href="channel.html?username=${r.uploadedBy}" class="username">${r.uploadedBy}</a>
+                <a href="user/${r.uploadedBy}" class="username">${r.uploadedBy}</a>
                     <div class="stats">
                         <span class="viewCount">${formatNumber(r.views)} views - </span>
                         <span class="timeStamp">${r.uploadDate}</span>

@@ -104,7 +104,7 @@ class Database {
 
     this.getRecommendedVideos = (callback) => {
       if (!this.connected) return callback(error('DATABASE NOT CONNECTED'))
-      this.con.query("SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1' ORDER BY RAND() LIMIT 6", (err, results) => {
+      this.con.query("SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1' ORDER BY RAND() LIMIT 20", (err, results) => {
         if (err) return callback(err)
         else return callback(null, results)
       })
@@ -142,7 +142,7 @@ class Database {
 
     this.insertVideo = (title, description, privacy, category, tags, url, username, file, callback) => {
       if (!this.connected) return callback(error('DATABASE NOT CONNECTED'))
-      this.con.query(`INSERT INTO videos (title, uploadedBy, description, tags, privacy, category, filePath, url) VALUES ('${title}','${username}','${description}','${tags}','${privacy}', '${category}', '${file}',`, (err, results) => {
+      this.con.query(`INSERT INTO videos (title, uploadedBy, description, tags, privacy, category, filePath, url) VALUES ('${title}', '${username}', '${description}', '${tags}', '${privacy}', '${category}', '${file}', '${url}')`, (err, results) => {
         if (err) return callback(err)
         else return callback(null, results)
       })
@@ -150,9 +150,9 @@ class Database {
 
     this.insertThumbnail = (id, latestVideoId, thumbnailId, thumbnailVideoId, callback) => {
       const params = [
-        [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_1.png', '1', thumbnailVideoId],
-        [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_2.png', '0', thumbnailVideoId],
-        [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_3.png', '0', thumbnailVideoId]
+        [latestVideoId, './uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_1.png', '1', thumbnailVideoId],
+        [latestVideoId, './uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_2.png', '0', thumbnailVideoId],
+        [latestVideoId, './uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_3.png', '0', thumbnailVideoId]
       ]
       this.con.query('INSERT INTO thumbnails (videoId, filePath, selected, url) VALUES ?', [params], (err, results) => {
         if (err) return callback(err)
