@@ -47,7 +47,7 @@ app.set('view engine', 'ejs')
 
 // Router
 app.use('/api', new API(Database))
-app.use('/upload', new Upload())
+app.use('/upload', new Upload(Database))
 app.use('/', new Base()) // Include our Base router last since this handles errors
 
 // Start Express
