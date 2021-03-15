@@ -3,11 +3,10 @@ const Router = require('./Router')
 class API extends Router {
   constructor (Database) {
     super()
-    this.Database = Database
 
     // Return all users
     this.get('/users', this.middleware.APIMiddleware, (req, res) => {
-      this.Database.getUsers((err, results) => {
+      Database.getUsers((err, results) => {
         if (err) throw err
         res.setHeader('Content-Type', 'application/json')
         res.status(200).send(JSON.stringify({ status: 200, error: null, response: results }))
@@ -31,7 +30,7 @@ class API extends Router {
       if (user.passwordInput !== user.confirmPasswordInput) return res.status(400).send({ error: true, message: 'You did not enter the same password' })
 
       // Username is present & passwords match
-      this.Database.createUser(user.firstName, user.lastName, user.username, user.email, user.passwordInput, (err, result) => {
+      Database.createUser(user.firstName, user.lastName, user.username, user.email, user.passwordInput, (err, result) => {
         if (err) return res.send({ error: true, message: 'Error creating user: ' + err.error })
         if (result === 'CREATED') return res.send({ error: false, message: 'You are registered!' })
         else return res.send({ error: true, message: 'An unknown error occurred.' })
@@ -42,7 +41,7 @@ class API extends Router {
     this.post('/users/login/', this.middleware.APIMiddleware, function (req, res) {
       const usernameInput = this.sanitizeHTML(req.body.username)
       const passwordInput = this.sanitizeHTML(req.body.password)
-      this.Database.login(usernameInput, passwordInput, (err, loggedIn) => {
+      Database.login('test', 'test', (err, loggedIn) => {
         if (err) return res.send({ error: true, message: 'Error logging in user: ' + err.error })
         if (!loggedIn) return res.status(400).send({ error: true, message: 'Wrong Credentials' })
         else {
@@ -88,7 +87,7 @@ class API extends Router {
 
     // Show single user
     this.get('/users/info/:id', this.middleware.APIMiddleware, (req, res) => {
-      this.Database.getUser(req.params.id, (err, results) => {
+      Database.getUser(req.params.id, (err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting user: ' + err.error })
         else return res.send({ status: 200, error: null, response: results })
       })
@@ -96,7 +95,7 @@ class API extends Router {
 
     // Show user's subscribers
     this.get('/users/subscribers/:id', this.middleware.APIMiddleware, (req, res) => {
-      this.Database.getSubscriptions(req.params.id, (err, results) => {
+      Database.getSubscriptions(req.params.id, (err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting user\'s subscriptions: ' + err.error })
         else return res.send(JSON.stringify({ status: 200, error: null, response: results }))
       })
@@ -104,7 +103,7 @@ class API extends Router {
 
     // Show all videos
     this.get('/video', this.middleware.APIMiddleware, (req, res) => {
-      this.Database.getAllVideos((err, results) => {
+      Database.getAllVideos((err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
         else return res.send(JSON.stringify({ status: 200, error: null, response: results }))
       })
@@ -112,7 +111,7 @@ class API extends Router {
 
     // Show all video thumbnails
     this.get('/api/video/thumbnails', this.middleware.APIMiddleware, (req, res) => {
-      this.Database.getVideoThumbnails((err, results) => {
+      Database.getVideoThumbnails((err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
         res.send(JSON.stringify({ status: 200, error: null, response: results }))
       })
@@ -120,7 +119,7 @@ class API extends Router {
 
     // Show latest videos
     this.get('/video/latest', this.middleware.APIMiddleware, (req, res) => {
-      this.Database.getLatestVideos((err, results) => {
+      Database.getLatestVideos((err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
         // videoArray = validator.escape(results);
         res.send(JSON.stringify({ status: 200, error: null, response: results }))
@@ -130,7 +129,7 @@ class API extends Router {
 
     // Show recommended videos
     this.get('/video/recommended', this.middleware.APIMiddleware, (req, res) => {
-      this.Database.getRecommendedVideos((err, results) => {
+      Database.getRecommendedVideos((err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
         // videoArray = validator.escape(results);
         res.send(JSON.stringify({ status: 200, error: null, response: results }))
@@ -140,7 +139,7 @@ class API extends Router {
 
     // Show video by ID
     this.get('/video/:id', this.middleware.APIMiddleware, (req, res) => {
-      this.Database.getVideo(req.params.id, (err, results) => {
+      Database.getVideo(req.params.id, (err, results) => {
         if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
         res.send(JSON.stringify({ status: 200, error: null, response: results }))
       })
@@ -166,7 +165,7 @@ class API extends Router {
               const category = this.sanitizeHTML(req.body.category)
               const tags = this.sanitizeHTML(req.body.tags)
 
-              this.Database.updateVideo(title, description, privacy, category ,tags, givenVideoUrl, userLoggedIn, (err, results) => {
+              Database.updateVideo(title, description, privacy, category ,tags, givenVideoUrl, userLoggedIn, (err, results) => {
                 if (err) return res.send({ error: true, message: 'Error updating video: ' + err.error })
                 res.status(200).send(JSON.stringify({ status: 200, error: err, response: results }))
               })
@@ -188,7 +187,7 @@ class API extends Router {
           const givenVideoUrl = this.sanitizeHTML(req.query.videoUrl)
           const userLoggedIn = req.session.user.userLoggedIn
           console.log(userLoggedIn + 'accessed the update video page')
-          this.Database.deleteVideo(givenVideoUrl, userLoggedIn, (err, results) => {
+          Database.deleteVideo(givenVideoUrl, userLoggedIn, (err, results) => {
             if (err) throw err
             res.setHeader('Content-Type', 'application/json')
             res.send(JSON.stringify({ status: 200, error: null, response: results }))
