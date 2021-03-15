@@ -43,6 +43,7 @@ class API extends Router {
       const usernameInput = this.sanitizeHTML(req.body.username)
       const passwordInput = this.sanitizeHTML(req.body.password)
       this.Database.login(usernameInput, passwordInput, (err, loggedIn) => {
+        if (err) return res.send({ error: true, message: 'Error logging in user: ' + err.error })
         if (!loggedIn) return res.status(400).send({ error: true, message: 'Wrong Credentials' })
         else {
           const sessionData = req.session
