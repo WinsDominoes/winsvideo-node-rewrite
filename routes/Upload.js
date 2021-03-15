@@ -5,7 +5,6 @@ const rand = require('random-id')
 class Upload extends Router {
   constructor (Database) {
     super()
-    this.Database = Database
     this.post('/', async (req, res) => {
       try {
         if (!req.files) {
@@ -76,8 +75,7 @@ class Upload extends Router {
           }
 
           const insertVideoInfo = async () => {
-
-            this.Database.insertVideo(name, description, privacy, category, tags, videoId, req.session.user.userLoggedIn, 'uploads/videos/" + id + ".mp4', (err, result) => {
+            Database.insertVideo(name, description, privacy, category, tags, videoId, req.session.user.userLoggedIn, 'uploads/videos/" + id + ".mp4', (err, result) => {
               if (err) throw err
               console.log('Video Info inserted')
 
@@ -96,7 +94,7 @@ class Upload extends Router {
                   })
 
                 const thumbnailVideoId = rand(12, 'aA0')
-                this.Database.insertThumbnail(id, latestVideoId, thumbnailId, thumbnailVideoId, (err, result) => {
+                Database.insertThumbnail(id, latestVideoId, thumbnailId, thumbnailVideoId, (err, result) => {
                   if (err) throw err
                   console.log('Thumbnail Video inserted')
                   console.dir(params)
@@ -121,7 +119,7 @@ class Upload extends Router {
 
                     console.log(metadata)
 
-                    this.Database.setVideoDuration(latestVideoId, duration, (err, result) => {
+                    Database.setVideoDuration(latestVideoId, duration, (err, result) => {
                       if (err) throw err
                       console.log(result)
                     })
