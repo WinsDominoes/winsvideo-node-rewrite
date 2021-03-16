@@ -78,7 +78,7 @@ class Upload extends Router {
           const insertVideoInfo = async () => {
               console.log('Video Upload database: Connected!')
 
-              Database.insertVideo(name, description, privacy, category, tags, videoId, userLoggedIn, 'uploads/videos/"' + id + '".mp4', (err, result) => {
+              Database.insertVideo(name, description, privacy, category, tags, videoId, userLoggedIn, 'uploads/videos/' + id + '.mp4', (err, result) => {
               // Database.insertVideo(name, description, privacy, category, tags, videoId, userLoggedIn, '.aaaaaaaaaa', (err, result) => {
                 console.log('Video Info inserted')
 

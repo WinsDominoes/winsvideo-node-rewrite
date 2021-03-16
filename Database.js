@@ -150,9 +150,9 @@ class Database {
 
     this.insertThumbnail = (id, latestVideoId, thumbnailId, thumbnailVideoId, callback) => {
       const params = [
-        [latestVideoId, './uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_1.png', '1', thumbnailVideoId],
-        [latestVideoId, './uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_2.png', '0', thumbnailVideoId],
-        [latestVideoId, './uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_3.png', '0', thumbnailVideoId]
+        [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_1.png', '1', thumbnailVideoId],
+        [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_2.png', '0', thumbnailVideoId],
+        [latestVideoId, 'uploads/videos/thumbnails/' + thumbnailId + '-' + id + '_3.png', '0', thumbnailVideoId]
       ]
       this.con.query('INSERT INTO thumbnails (videoId, filePath, selected, url) VALUES ?', [params], (err, results) => {
         if (err) return callback(err)

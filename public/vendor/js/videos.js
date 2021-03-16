@@ -34,7 +34,7 @@ function show (data) {
   for (const r of data.response) {
     tab += `
         <div class="videoGridItem">
-            <a href="watch.html?v=${r.url}">
+            <a href="watch?v=${r.url}">
                 <div class="thumbnail">
                     <img src="https://videos.winsvideo.net/${r.filePath}">
                     <div class="duration">
