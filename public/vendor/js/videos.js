@@ -28,32 +28,36 @@ function hideloader () {
 }
 // Function to define innerHTML for HTML table
 function show (data) {
+
   let tab = ''
 
   // Loop to access all rows
   for (const r of data.response) {
-    tab += `
-        <div class="videoGridItem">
-            <a href="watch?v=${r.url}">
-                <div class="thumbnail">
-                    <img src="https://videos.winsvideo.net/${r.filePath}">
-                    <div class="duration">
-                        <span>${r.duration}</span>
-                    </div>
-                </div>
-            </a>
-            
-            <div class="details">
-                <a href="watch?v=${r.url}">
-                    <h3 class="title">${r.title}</h3>
-                </a>
-                <a href="user/${r.uploadedBy}" class="username">${r.uploadedBy}</a>
-                    <div class="stats">
-                        <span class="viewCount">${formatNumber(r.views)} views - </span>
-                        <span class="timeStamp">${r.uploadDate}</span>
-                    </div>        
-                </div>
-            </div>`
+
+              tab += `
+                <div class="videoGridItem">
+                    <a href="watch?v=${r.url}">
+                        <div class="thumbnail">
+                            <img src="https://videos.winsvideo.net/${r.filePath}">
+                            <div class="duration">
+                                <span>${r.duration}</span>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <div class="details">
+                        <a href="watch?v=${r.url}">
+                            <h3 class="title">${r.title}</h3>
+                        </a>
+                        <a href="user/${r.uploadedBy}" class="username">${r.uploadedBy}</a>
+                            <div class="stats">
+                                <span class="viewCount">${formatNumber(r.views)} views - </span>
+                                <span class="timeStamp">${r.uploadDate}</span>
+                            </div>        
+                        </div>
+                    </div>` 
+
+      
   }
   // Setting innerHTML as tab variable
   document.getElementById('videoGrid').innerHTML = tab

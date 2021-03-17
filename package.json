@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --reporter list",
     "start": "node index.js",
     "fix": "standard --fix index.js"
   },
@@ -35,5 +35,8 @@
     "standard": "^16.0.3",
     "validator": "^13.5.2",
     "xss": "^1.0.8"
+  },
+  "devDependencies": {
+    "mocha": "^8.3.2"
   }
 }

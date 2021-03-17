@@ -1,0 +1,42 @@
+<%- include('partials/watchHeader.ejs') %>
+<div class="container">
+
+    <div id="watch">
+        <!-- watch page -->
+        <div id="watchSection" class="column">
+            <video
+                id="videoPlayer"
+                class="video-js"
+                controls
+                preload="auto"
+                width="640"
+                height="360"
+                data-setup="{}"
+            >
+                <source src="" type="video/mp4" id="videoPlayerSource" />
+                <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a
+                web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank"
+                    >supports HTML5 video</a
+                >
+                </p>
+            </video>
+
+                <hr>
+
+            <div id="videoSection">
+                <h3 id="title">Title</h3>
+                <span id="description">Description</span>
+
+                <br>
+
+                <span id="uploadedBy">Uploaded By</span>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
+<%- include('partials/footer.ejs') %>
