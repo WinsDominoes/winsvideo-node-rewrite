@@ -5,6 +5,8 @@ const global = (req, res, next) => {
 
 const APIMiddleware = (req, res, next) => {
   res.setHeader('Content-Type', 'application/json')
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next()
 }
 

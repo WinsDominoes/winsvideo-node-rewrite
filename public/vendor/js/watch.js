@@ -14,7 +14,7 @@ function formatNumber (num) {
         // declare some variables
         const v = urlParams.get('v');
 
-        $.getJSON('http://localhost:3000/api/video/'+v+'', function(data) {
+        $.getJSON('https://beta.winsvideo.net/api/video/'+v+'', function(data) {
                 let id = data["response"][0]["id"];
                 let uploadedBy = data["response"][0]["uploadedBy"];
                 let title = data["response"][0]["title"];

@@ -1,1 +1,1 @@
-POST http://localhost:3000/api/users/login
+POST https://beta.winsvideo.netapi/users/login
