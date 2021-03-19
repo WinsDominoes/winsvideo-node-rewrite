@@ -137,6 +137,37 @@ class API extends Router {
       })
     })
 
+    this.get('/video/search', this.middleware.APIMiddleware, (req, res) => {
+
+      let searchQuery = req.query.q;
+
+      if(searchQuery == "null") {
+
+        res.send(JSON.stringify({ status: 400, error: "No search query were entered.", response: null }))
+
+      } else if(searchQuery.length < 2) {
+
+        res.send(JSON.stringify({ status: 400, error: "Less than 2 characters", response: null }))
+
+      } else if (searchQuery) {
+
+        this.Database.getVideoFromSearch(searchQuery, (err, results) => {
+
+          if(results != null) {
+
+            if (err) return res.send({ error: true, message: 'Error getting videos: ' + err.error })
+            // videoArray = validator.escape(results);
+            res.send(JSON.stringify({ status: 200, error: null, response: results }))
+            // videoArray = validator.escape(results);
+
+          }
+        })
+
+      } else {
+        res.send(JSON.stringify({ status: 400, error: "No search query were entered."}))
+      }
+    })
+
     // Show video by ID
     this.get('/video/:id', this.middleware.APIMiddleware, (req, res) => {
       this.Database.getVideo(req.params.id, (err, results) => {

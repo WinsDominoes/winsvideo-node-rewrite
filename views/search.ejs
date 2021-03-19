@@ -1,5 +1,5 @@
 <%- include('partials/header.ejs') %>
-<script src="https://beta.winsvideo.net/vendor/js/videos.js"></script>
+
 <div class="container">
 
     <div id="recommended">
@@ -14,15 +14,14 @@
             </div>
         </div>
         <!-- videogrid -->
-        <div id="recommendedSection" class="column">
-            <b>Recommended</b>
-            <hr>
-            <div id="videoGrid" class="videoGrid"></div>
+        <div class="largeVideoGridContainer">
+            <div id="searchSection" class="column">
+                <b>Results</b>
+                <hr>
+                <div id="videoGridSearch" class="videoGrid large"></div>
+                <script src="http://localhost:3000/vendor/js/search.js"></script>
+            </div>
         </div>
-    </div>
-
-    <div id="latest">
-        <!-- video that was uploaded -->
     </div>
 </div>
 <%- include('partials/footer.ejs') %>

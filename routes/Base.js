@@ -17,6 +17,10 @@ class Base extends Router {
       res.render('watch')
     })
 
+    this.get('/search', (req, res) => {
+      res.render('search')
+    })
+
     // Catch 404 errors here
     this.get('*', (req, res) => {
       res.status(400).send('404: Could not find that page')

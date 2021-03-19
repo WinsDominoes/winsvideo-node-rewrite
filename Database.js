@@ -118,6 +118,19 @@ class Database {
       })
     }
 
+    this.getVideoFromSearch = (searchQuery, callback) => {
+      if (!this.connected) return callback(error('DATABASE NOT CONNECTED'))
+        this.con.query(`SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1' AND (title LIKE '%${searchQuery}%' OR tags LIKE '%${searchQuery}%') AND privacy = '1' ORDER BY uploadDate DESC`, (err, results) => {
+          
+          if(results == null) {
+            return callback(true, "No videos found.")
+          }
+          
+          if (err) return callback(err)
+          else return callback(null, results)
+        })
+    }
+
     this.getVideoThumbnails = (id, callback) => {
       if (!this.connected) return callback(error('DATABASE NOT CONNECTED'))
       this.con.query('SELECT * FROM thumbnails WHERE selected=1', (err, results) => {

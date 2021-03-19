@@ -14,6 +14,7 @@ async function getapi (url) {
   // Storing data in form of JSON
   const data = await response.json()
   console.log(data.response)
+  document.getElementById('loading').style.display = 'none'
   if (response) {
     hideloader()
   }
