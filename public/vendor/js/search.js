@@ -10,7 +10,7 @@ function formatNumber (num) {
 
     if(q) {
         // api url
-        const api_url = 'http://localhost:3000/api/video/search?q='+q+''
+        const api_url = 'https://beta.winsvideo.net/api/video/search?q='+q+''
         
         // Defining async function
         async function getapi (url) {
