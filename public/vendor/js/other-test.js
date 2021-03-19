@@ -29,11 +29,14 @@ function formatNumber (num) {
                     // who tf cares about categories
                     let filePath = data["response"][0]["filePath"];
 
-                    $("#videoPlayerSource").attr("src", "https://videos.winsvideo.net/" + filePath);
-                    
-                    $("#title").text(title);
-                    $("#description").text(description);
-                    $("#uploadedBy").text(uploadedBy);
+                    let videoPlayerSource = document.querySelector('#videoPlayerSource');
+                    if (videoPlayerSource) {
+                        videoPlayerSource.setAttribute('src', 'https://videos.winsvideo.net/' + filePath);
+                    }
+
+                    document.getElementById('title').innerText = title;
+                    document.getElementById('description').innerText = description;
+                    document.getElementById('uploadedBy').innerText = "By: " + uploadedBy;
                 }         
             })
     }

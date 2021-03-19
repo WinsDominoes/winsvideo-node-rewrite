@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script
+			  src="https://code.jquery.com/jquery-3.6.0.min.js"
+			  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			  crossorigin="anonymous"></script>
+</head>
+<body>
+    <script>
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        // declare some variables
+        const v = urlParams.get('v');
+
+        $.ajax({
+                type: "GET",
+                url: "https://beta.winsvideo.net/api/video/"+v+"",
+                contentType: "application/json",
+                dataType: 'json',
+                async: false, 
+                success: function(result) {
+                    console.log(result);
+                }         
+            })
+    </script>
+</body>
+</html>
