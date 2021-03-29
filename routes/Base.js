@@ -10,15 +10,42 @@ class Base extends Router {
     this.use('/jquery', this.express.static(path.join(__dirname, '..', 'node_modules', 'jquery', 'dist')))
 
     this.get('/', (req, res) => {
-      res.render('home')
+      try {
+        res.render('home', {data : {userSignedIn: req.session.user.userLoggedIn}})
+        console.log(req.session.user.userLoggedIn)
+      } catch (err) {
+        res.render('home', {data : {userSignedIn: ""}})
+      }
     })
 
     this.get('/watch', (req, res) => {
-      res.render('watch')
+      try {
+        res.render('watch', {data : {userSignedIn: req.session.user.userLoggedIn}})
+        console.log(req.session.user.userLoggedIn)
+      } catch (err) {
+        res.render('watch', {data : {userSignedIn: ""}})
+      }
+    })
+
+    this.get('/login', (req, res) => {
+      try {
+        res.render('login')
+      } catch (err) {
+        
+      }
     })
 
     this.get('/search', (req, res) => {
-      res.render('search')
+      try {
+        res.render('search', {data : {userSignedIn: req.session.user.userLoggedIn}})
+        console.log(req.session.user.userLoggedIn)
+      } catch (err) {
+        res.render('search', {data : {userSignedIn: ""}})
+      }
+    })
+
+    this.get('/mobile', (req, res) => {
+      res.render('mobile')
     })
 
     // Catch 404 errors here

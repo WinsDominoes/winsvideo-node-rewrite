@@ -164,3 +164,129 @@ a:hover {
     display: flex;
     flex-direction: column;
 }
+
+  .vjs-matrix .vjs-big-play-button:hover {
+    background-color: rgba(0.5);
+  }
+
+  /* /* Change the color of various "bars". 
+  .vjs-matrix .vjs-volume-level,
+  .vjs-matrix .vjs-play-progress,
+  .vjs-matrix .vjs-slider-bar {
+    background: #00b300;
+  } 
+
+  */
+
+  .vjs-matrix .vjs-load-progress {
+    /* For IE8 we'll lighten the color */
+    background: lighten(25%);
+    /* Otherwise we'll rely on stacked opacities */
+    background-color: rgba(0.5);
+  }
+
+  
+
+  .vjs-matrix .vjs-control-bar,
+  .vjs-matrix .vjs-big-play-button,
+  .vjs-matrix .vjs-menu-button .vjs-menu-content {
+/* IE8 - has no alpha support */
+background-color: #000;
+/* Opacity: 1.0 = 100%, 0.0 = 0% */
+background-color: rgba(0.0);
+}
+
+  .vjs-matrix .vjs-big-play-button {
+    background-color: #22b14c;
+  }
+
+  .vjs-matrix .vjs-menu-item-text {
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    padding-bottom: 0.4em;
+    padding-left: 0.4em;
+  }
+
+/* mobile things */
+@media only screen and (max-width: 768px) {
+  .videoGrid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .suggestions .videoGridItem {
+        display: flex;
+        height: auto;
+    }
+
+    .videoGridItem {
+        height: 200px;
+        margin-right: 8px;
+        margin-bottom: 24px;
+    }
+
+    .videoGridItem .thumbnail {
+        width: 266px;
+        height: 138px;
+        position: relative;
+    }
+
+    .suggestions .videoGridItem .thumbnail {
+        margin-right: 8px;
+    }
+
+    .videoGridItem .thumbnail img {
+        width: 100%;
+        height: 138px;
+    }
+
+    .videoGridItem .thumbnail .duration {
+        bottom: 0;
+        right: 0;
+        position: absolute;
+        margin: 4px;
+        color: #fff;
+        background-color: rgba(17,17,17,0.8);
+        opacity: 0.8;
+        padding: 2px 4px;
+        border-radius: 2px;
+        letter-spacing: 0.5px;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 12px;
+    }
+
+    .videoGridItem .details {
+        padding-right: 24px;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        width: 210px;
+    }
+
+    .suggestions .videoGridItem .details {
+        padding-right: 0;
+        flex: 1;
+    }
+
+    .videoGridItem .details .title {
+        margin: 8px 0;
+        max-height: 32px;
+        overflow: hidden;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 16px;
+        color: #212529;
+    }
+
+    .videoGridItem .details .username,
+    .videoGridItem .details .stats {
+        color: rgba(17,17,17,0.6);
+        font-size: 13px;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

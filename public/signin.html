@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WinsVideo | Sign In</title>
+</head>
+<body>
+    <form method="POST" action="api/users/login" enctype="multipart/form-data">
+        <input type="text" name="username">
+        <input type="text" name="password">
+
+        <button type="submit">Sign In</button>
+    </form>
+
+    <script src="vendor/jquery/jquery.min.js"></script>
+            <script>
+
+              const api_url2 = "https://beta.winsvideo.netapi/users/loggedIn"; 
+              async function getapi(url) { 
+                // Storing response 
+                const response = await fetch(url); 
+                
+                // Storing data in form of JSON 
+                var data = await response.json(); 
+                console.log(data.error); 
+                if (data.error == true) { 
+                  // document.write("<li class='nav-item'></li>");
+                  // document.write("oof"); 
+                } else {
+                  document.write("yaye");
+                }
+              }
+
+              getapi(api_url2); 
+    </script>
+</body>
+</html>

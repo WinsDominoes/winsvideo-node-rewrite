@@ -17,7 +17,7 @@ function formatNumber (num) {
 
             $.ajax({
                 type: "GET",
-                url: "https://beta.winsvideo.net/api/video/"+v+"",
+                url: "http://localhost:3000/api/video/"+v+"",
                 contentType: "application/json",
                 dataType: 'json',
                 async: false, 
@@ -37,3 +37,5 @@ function formatNumber (num) {
                 }         
             })
     }
+
+   

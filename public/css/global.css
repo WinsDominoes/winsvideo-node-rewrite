@@ -26,8 +26,7 @@ a:hover {
     margin-left: 8px;
 }
 
-.column {
-    flex-grow: 1;
+.column {   
     width: 100%; 
     background-color: #fff;
     min-height: 100px;
@@ -46,15 +45,6 @@ a:hover {
     z-index: 1000;
     width: 100%;
 }
-
-#page-content-wrapper {
-    margin-top: 56.5px;
-}
-
-#sidebar-wrapper {
-    margin-top: 56.5px;
-}
-
 #searchBar {
     flex: 1;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -136,13 +126,9 @@ a:hover {
 }
 
 .videoGrid {
-    display: flex;
+    display: inline-flex;
     flex-wrap: wrap;
-}
-
-.videoGrid {
-    display: flex;
-    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .suggestions .videoGridItem {
@@ -160,6 +146,10 @@ a:hover {
     width: 210px;
     height: 110px;
     position: relative;
+}
+
+.videoGridItem .thumbnail img:hover {
+    opacity: 0.5;
 }
 
 .suggestions .videoGridItem .thumbnail {
@@ -218,4 +208,43 @@ a:hover {
     overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+/* large video grid for search results */
+.videoGrid.large {
+    flex-direction: column;
+    flex: 1;
+}
+
+.videoGrid.large .videoGridItem {
+    height: auto;
+    display: flex;
+}
+
+.videoGrid.large .videoGridItem .thumbnail {
+    width: 266px;
+    height: 138px;
+    margin-right: 16px;
+}
+
+.videoGrid.large .videoGridItem .details {
+    max-width: 600px;
+    flex: 1;
+}
+
+.videoGrid.large .videoGridItem .details .title {
+    font-size: 13px;
+    line-height: 24px;
+}
+
+.videoGridItem .details .description {
+    color: rgba(17,17,17,0.6);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.largeVideoGridContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }

@@ -7,9 +7,10 @@ Base router class for building on top of Express' Router
 const express = require('express')
 const path = require('path')
 const sanitizeHtml = require('sanitize-html')
-const middleware = require(path.join(__dirname, '..', 'Middleware.js'))
+const middleware = require('../middleware')
 const VIEWS_DIR = path.join(__dirname, '..', 'public') // Define our views directory
 const STATIC_DIR = path.join(__dirname, '..', 'public') // Define our static directory
+const 
 
 class Router extends express.Router {
   constructor () {

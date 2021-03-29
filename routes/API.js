@@ -145,6 +145,10 @@ class API extends Router {
 
         res.send(JSON.stringify({ status: 400, error: "No search query were entered.", response: null }))
 
+      } else if (!searchQuery) {
+
+        res.send(JSON.stringify({ status: 400, error: "No search query were entered."}))
+        
       } else if(searchQuery.length < 2) {
 
         res.send(JSON.stringify({ status: 400, error: "Less than 2 characters", response: null }))

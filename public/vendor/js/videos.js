@@ -4,7 +4,7 @@ function formatNumber (num) {
 }
 
 // api url
-const api_url = 'https://beta.winsvideo.net/api/video/recommended'
+const api_url = 'http://localhost:3000/api/video/recommended'
 
 // Defining async function
 async function getapi (url) {

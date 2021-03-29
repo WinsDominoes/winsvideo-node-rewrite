@@ -1,0 +1,28 @@
+<%- include('partials/header.ejs') %>
+<script src="https://beta.winsvideo.net/vendor/js/videos.js"></script>
+<div class="container">
+
+    <div id="recommended">
+        <!-- recommended videos on the homepage-->
+
+        <!-- Here a loader is created which
+     loads till response comes -->
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border"
+                 role="status" id="loading">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- videogrid -->
+        <div id="recommendedSection" class="column">
+            <b>Recommended</b>
+            <hr>
+            <div id="videoGrid" class="videoGrid"></div>
+        </div>
+    </div>
+
+    <div id="latest">
+        <!-- video that was uploaded -->
+    </div>
+</div>
+<%- include('partials/footer.ejs') %>

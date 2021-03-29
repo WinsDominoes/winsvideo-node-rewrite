@@ -1,43 +1,249 @@
-<%- include('partials/watchHeader.ejs') %>
-<div class="container">
+<!DOCTYPE html>
+<html lang="en">
 
-    <div id="watch">
-        <!-- watch page -->
-        <div id="watchSection" class="column">
-            <video
-                id="videoPlayer"
-                class="video-js"
-                controls
-                preload="auto"
-                width="640"
-                height="360"
-                data-setup="{}"
-            >
-                <source src="" type="video/mp4" id="videoPlayerSource" />
-                <p class="vjs-no-js">
-                To view this video please enable JavaScript, and consider upgrading to a
-                web browser that
-                <a href="https://videojs.com/html5-video-support/" target="_blank"
-                    >supports HTML5 video</a
-                >
-                </p>
-            </video>
+<head>
 
-                <hr>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-            <div id="videoSection">
-                <h3 id="title">Title</h3>
-                <span id="description">Description</span>
+  <title>WinsVideo | Home</title>
 
-                <br>
+  <!-- Bootstrap core CSS -->
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-                <span id="uploadedBy">Uploaded By</span>
+  <!-- Custom styles for this template -->
+  <link href="./css/simple-sidebar.css" rel="stylesheet">
 
-                <script src="https://beta.winsvideo.net/vendor/js/watch.js"></script>
-            </div>
+  <link href="./css/global.css" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
+      <script src="vendor/jquery/jquery.min.js"></script>
+
+  <script src="vendor/js/watch.js"></script> 
+  <script src="vendor/js/navbar.js"></script> 
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+        <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
+
+  <style>
+    .vjs-matrix .vjs-big-play-button:hover {
+    background-color: rgba(0.5);
+  }
+
+  /* /* Change the color of various "bars". 
+  .vjs-matrix .vjs-volume-level,
+  .vjs-matrix .vjs-play-progress,
+  .vjs-matrix .vjs-slider-bar {
+    background: #00b300;
+  } 
+
+  */
+
+  .vjs-matrix .vjs-load-progress {
+    /* For IE8 we'll lighten the color */
+    background: lighten(25%);
+    /* Otherwise we'll rely on stacked opacities */
+    background-color: rgba(0.5);
+  }
+
+  
+
+  .vjs-matrix .vjs-control-bar,
+  .vjs-matrix .vjs-big-play-button,
+  .vjs-matrix .vjs-menu-button .vjs-menu-content {
+/* IE8 - has no alpha support */
+background-color: #000;
+/* Opacity: 1.0 = 100%, 0.0 = 0% */
+background-color: rgba(0.0);
+}
+
+  .vjs-matrix .vjs-big-play-button {
+    background-color: #22b14c;
+  }
+
+  .vjs-matrix .vjs-menu-item-text {
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    padding-bottom: 0.4em;
+    padding-left: 0.4em;
+  }
+</style>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light border-bottom top-navbar sticky is-sticky" data-toggle="sticky-onscroll" style="padding: 4.5px 16px; background-color: #fff;">
+        <button id="menu-toggle">
+            <span class="material-icons" style="color: #ddd">
+                menu
+            </span>
+        </button>
+
+        <a class="navbar-brand" href="/">
+            <img src="./icons/WinsVideoLogo.png" id="logo">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="material-icons" style="color: #ddd">
+            menu
+        </span>
+          </button>
+
+          <form method="GET" enctype="multipart/form-data" class="form-inline" style="margin-left: 50px;">
+            <input id="searchBar" type="search" placeholder="Search" aria-label="Search">
+            <button id="searchButton" type="submit">
+              <span class="material-icons">search</span>
+            </button>
+          </form>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="upload.html">
+                <button id="uploadButton">Upload</button>
+              </a>
+            </li>
+            <li class="nav-item" id="profileButtonContainer" href="login.html"></li>
+            <script src="vendor/jquery/jquery.min.js"></script>
+            <script>
+                function getUserSignedInData(username) {
+                    const api_url2 = "https://beta.winsvideo.netapi/users/info/"; 
+                    async function getapi(url) { 
+                        // Storing response 
+                        const response = await fetch(url); 
+                        
+                        // Storing data in form of JSON 
+                        var data = await response.json(); 
+                        console.log(data.error); 
+
+                        const results = [data.username];
+                        return  
+                    }
+
+                    getapi(api_url2); 
+                }
+
+                let data = '<%= data.userSignedIn %>';
+                if (data == "") { 
+                  // document.write("<li class='nav-item'></li>");
+                  document.getElementById("profileButtonContainer").innerHTML = "<a class='nav-link' href='login.html'><button id='signInButton'>Sign In</button></a>"; 
+                } else {
+                  document.getElementById("profileButtonContainer").innerHTML = "Signed In";
+                  console.log("signed in");
+                }
+            </script>
+          </ul>
+        </div>
+      </nav>
+
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="border-right" id="sidebar-wrapper" style="width: 230px">
+        <div class="menuItems">
+                <a href="test" class="menu active">
+                    <span class="material-icons navigationIcons">
+                        home
+                    </span>
+                    <span class="menu-text">Home</span>
+                </a>
+                <a href="test" class="menu">
+                    <span class="material-icons navigationIcons">
+                        local_fire_department
+                    </span>
+                    <span class="menu-text">Trending</span>
+                </a>
+                <hr style="margin: 3px;">
+                <b><span style="font-size: 13px; color: green">Account</span></b>
+                <a href="test" class="menu">
+                    <span class="material-icons navigationIcons">
+                        thumbs_up_down
+                    </span>
+                    <span class="menu-text">Liked</span>
+                </a>
+                <a href="test" class="menu">
+                    <span class="material-icons navigationIcons">
+                        subscriptions
+                    </span>
+                    <span class="menu-text">Subscriptions</span>
+                </a>
+                <a href="test" class="menu">
+                    <span class="material-icons navigationIcons">
+                        hourglass_empty
+                    </span>
+                    <span class="menu-text">History</span>
+                </a>
         </div>
     </div>
-</div>
+    <!-- /#sidebar-wrapper -->
+    
 
-<script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
-<%- include('partials/footer.ejs') %>
+    <!-- Page Content -->
+    <div id="page-content-wrapper" class="bg-light">
+      <div class="container-fluid">
+          <div id="watch">
+            <!-- watch page -->
+            <div id="watchSection" class="column">
+                <video
+                    id="videoPlayer"
+                    class="video-js vjs-matrix vjs-theme-forest vjs-big-play-centered videoPlayer"
+                    controls
+                    autoplay
+                    preload="auto"
+                    width="640"
+                    height="360"
+                    data-setup="{}"
+                >
+                    <source src="" type="video/mp4" id="videoPlayerSource" />
+                    <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a
+                    web browser that
+                    <a href="https://videojs.com/html5-video-support/" target="_blank"
+                        >supports HTML5 video</a
+                    >
+                    </p>
+                </video>
+    
+                    <script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>        <hr>
+    
+                <div id="videoSection">
+                    <h3 id="title">Title</h3>
+                    <span id="description">Description</span>
+    
+                    <br>
+    
+                    <span id="uploadedBy">Uploaded By</span>
+    
+                    <script src="https://beta.winsvideo.net/vendor/js/watch.js"></script>
+                </div>
+            </div>
+
+
+            <div id="suggestions" style="float: right">
+              sssss
+            </div>
+        </div>
+      </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Menu Toggle Script -->
+  <script>
+    $("#menu-toggle").click(function(e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });    
+  </script>
+
+</body>
+
+</html>

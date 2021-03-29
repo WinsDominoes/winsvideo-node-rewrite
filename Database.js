@@ -96,7 +96,7 @@ class Database {
 
     this.getLatestVideos = (callback) => {
       if (!this.connected) return callback(error('DATABASE NOT CONNECTED'))
-      this.con.query("SELECT * FROM videos WHERE privacy = '1' ORDER BY uploadDate DESC LIMIT 30", (err, results) => {
+      this.con.query("SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1' ORDER BY uploadDate DESC LIMIT 21", (err, results) => {
         if (err) return callback(err)
         else return callback(null, results)
       })
@@ -104,7 +104,7 @@ class Database {
 
     this.getRecommendedVideos = (callback) => {
       if (!this.connected) return callback(error('DATABASE NOT CONNECTED'))
-      this.con.query("SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1' ORDER BY RAND() LIMIT 20", (err, results) => {
+      this.con.query("SELECT * FROM videos, thumbnails WHERE videos.id = thumbnails.videoId AND privacy = '1' AND thumbnails.selected = '1' ORDER BY RAND() LIMIT 21", (err, results) => {
         if (err) return callback(err)
         else return callback(null, results)
       })

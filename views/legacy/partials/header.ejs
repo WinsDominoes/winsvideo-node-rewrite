@@ -21,15 +21,13 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
 
-        <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-
+   <script src="vendor/jquery/jquery.min.js"></script>
+    
   <script src="vendor/js/videos.js"></script> 
-  <script src="vendor/js/latest.js"></script>
   <script src="vendor/js/navbar.js"></script> 
 
-  
-
+    
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -41,7 +39,7 @@
             </span>
         </button>
 
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="">
             <img src="./icons/WinsVideoLogo.png" id="logo">
         </a>
 
@@ -51,8 +49,8 @@
         </span>
           </button>
 
-          <form action="/search" method="GET" enctype="multipart/form-data" class="form-inline" style="margin-left: 50px;">
-            <input id="searchBar" type="search" placeholder="Search" aria-label="Search" name="q">
+          <form method="GET" enctype="multipart/form-data" class="form-inline" style="margin-left: 50px;">
+            <input id="searchBar" type="search" placeholder="Search" aria-label="Search">
             <button id="searchButton" type="submit">
               <span class="material-icons">search</span>
             </button>
@@ -85,7 +83,7 @@
                     getapi(api_url2); 
                 }
 
-                let data = '<%= data.userSignedIn %>';
+                let data = '<%= data.userLoggedIn %>';
                 if (data == "") { 
                   // document.write("<li class='nav-item'></li>");
                   document.getElementById("profileButtonContainer").innerHTML = "<a class='nav-link' href='login.html'><button id='signInButton'>Sign In</button></a>"; 
@@ -137,55 +135,3 @@
         </div>
     </div>
     <!-- /#sidebar-wrapper -->
-    
-
-    <!-- Page Content -->
-    <div id="page-content-wrapper" class="bg-light">
-      <div class="container-fluid">
-        <div class="column">
-
-          <span>Recommended</span>
-          <hr>
-
-            <!-- Here a loader is created which  
-             loads till response comes -->
-              <div class="d-flex justify-content-center"> 
-                <div class="spinner-border" 
-                    role="status" id="loading"> 
-                    <span class="sr-only">Loading...</span> 
-                </div> 
-            </div> 
-            <!-- videogrid -->
-            <div id="videoGrid" class="videoGrid"></div>
-        </div>
-
-        <div class="column">
-            <span>Latest!</span>
-          <hr>
-
-            <!-- Here a loader is created which  
-             loads till response comes -->
-              <div class="d-flex justify-content-center"> 
-                <div class="spinner-border" 
-                    role="status" id="loading2"> 
-                    <span class="sr-only">Loading...</span> 
-                </div> 
-            </div> 
-            <!-- videogrid -->
-            <div id="videoGridLatest" class="videoGrid"></div>
-        </div>
-      </div>
-    </div>
-    <!-- /#page-content-wrapper -->
-
-  <!-- Menu Toggle Script -->
-  <script>
-    $("#menu-toggle").click(function(e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-    });    
-  </script>
-
-</body>
-
-</html>
